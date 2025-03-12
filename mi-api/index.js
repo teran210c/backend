@@ -119,6 +119,17 @@ app.put('/participantes/:id', (req, res) => {
     }
 });
 
+app.delete('/participantes/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = participantes.findIndex(p => p.id === id);
+
+    if (index !== -1) {
+        const deletedParticipante = participantes.splice(index, 1);
+        res.json(deletedParticipante[0]);
+    } else {
+        res.status(404).json({ message: "El participante no existe" });
+    }
+});
 
 app.listen(port, ()=>{
     console.log('Servidor escuchando el puerto', port)
