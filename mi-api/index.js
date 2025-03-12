@@ -57,6 +57,10 @@ app.delete('/users/:id', (req,res)=>{
     }
 })
 
+app.get('/participantes', (req, res) => {
+    res.json(participantes);
+});
+
 app.listen(port, ()=>{
     console.log('Servidor escuchando el puerto', port)
 })
