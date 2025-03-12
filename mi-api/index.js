@@ -96,6 +96,29 @@ app.post('/participantes', (req, res) => {
     res.status(201).json(participante);
 });
 
+app.put('/participantes/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = participantes.findIndex(p => p.id === id);
+
+    if (index !== -1) {
+        const { nombre, calificacion, servicio, comentario } = req.body;
+
+        if (
+            typeof nombre !== 'string' ||
+            typeof calificacion !== 'number' ||
+            typeof servicio !== 'number' ||
+            typeof comentario !== 'string'
+        ) {
+            return res.status(400).json({ message: "Datos inválidos. Verifica los tipos de datos." });
+        }
+
+        participantes[index] = { ...participantes[index], nombre, calificacion, servicio, comentario };
+        res.json(participantes[index]);
+    } else {
+        res.status(404).json({ message: "El participante no existe" });
+    }
+});
+
 
 app.listen(port, ()=>{
     console.log('Servidor escuchando el puerto', port)
