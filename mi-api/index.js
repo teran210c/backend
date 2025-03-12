@@ -61,6 +61,17 @@ app.get('/participantes', (req, res) => {
     res.json(participantes);
 });
 
+app.get('/participantes/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const participante = participantes.find(p => p.id === id);
+    
+    if (participante) {
+        res.json(participante);
+    } else {
+        res.status(404).json({ message: "Participante no encontrado" });
+    }
+});
+
 app.listen(port, ()=>{
     console.log('Servidor escuchando el puerto', port)
 })
