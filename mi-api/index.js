@@ -34,6 +34,28 @@ app.post('/users', (req,res)=>{
 
 })
 
+app.put('/users/:id', (req,res)=>{
+    const id = parseInt(req.params.id);
+    const index = users.findIndex(u=>u.id===id);
+    if (index !== -1){
+        users[index] = {...users[index], ...req.body};
+        res.json(users[index])
+    } else{
+        res.status(404).json({message:'El usuario no existe'})
+    }
+})
+
+
+app.delete('/users/:id', (req,res)=>{
+    const id = parseInt(req.params.id);
+    const index = users.findIndex(u=>u.id===id);
+    if (index !== -1){
+        const deletedUsers = users.splice(index,1);
+        res.json(deletedUsers[0])
+    } else{
+        res.status(404).json({message:'El usuario no existe'})
+    }
+})
 
 app.listen(port, ()=>{
     console.log('Servidor escuchando el puerto', port)
