@@ -1,10 +1,16 @@
 const express = require('express');
 const app = express.Router();
+const db = require('../config/db').pool;
 
 const users = []
 
-app.get('/users', (req,res)=>{
-    res.json(users)
+app.get('/users', async (req,res)=>{
+    try {
+        const [rows] = await db.query('SELECT * FROM users');
+        res.json(rows)
+    }catch(error){
+        res.status(500).json({error:error.message})
+    }
 })
 
 app.get('/users/:id', (req,res)=>{
