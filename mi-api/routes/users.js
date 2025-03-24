@@ -13,33 +13,44 @@ app.get('/users', async (req,res)=>{
     }
 })
 
-app.get('/users/:id', (req,res)=>{
+app.get('/users/:id', async (req,res)=>{
     const id = parseInt(req.params.id)
-    const user = users.find(u=>u.id===id);
-    if (user){
-        res.json(user)
-    } else{
-        res.status(404).json({message:"Usuario no encontrado"})
-
+    try {
+        const[rows] = await db.query('SELECT * FROM USERS WHERE ID = ?', [id]);
+        if(rows.length > 0){
+            res.json(rows[0])
+        }else {
+            res.status(400).json({message:"Usuario no encontrado"})
+        }
+    } catch (error) {
+        res.status(500).json({error:error.message})
+        
     }
 })
 
-app.post('/users', (req,res)=>{
-    const user = req.body;
-    user.id = users.length + 1
-    users.push(user);
-    res.status(201).json(user);
+app.post('/users', async (req,res)=>{
+    try {
+        const {nombre, email} = req.body;
+        const [result] = await db.query('INSERT INTO users (nombre, email) VALUES (?, ?)', [nombre, email]);
+        res.status(201).json({id: result.insertId, nombre, email});
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
 
 })
 
-app.put('/users/:id', (req,res)=>{
+app.put('/users/:id', async (req,res)=>{
     const id = parseInt(req.params.id);
-    const index = users.findIndex(u=>u.id===id);
-    if (index !== -1){
-        users[index] = {...users[index], ...req.body};
-        res.json(users[index])
-    } else{
-        res.status(404).json({message:'El usuario no existe'})
+    try {
+        const {nombre, email} = req.body;
+        const [result] = await db.query('UPDATE users SET nombre = ?, email = ? WHERE id = ?', [nombre, email, id]);
+        if (result.affectedRows > 0) {
+            res.json({message: 'Usuario actualizado correctamente'});
+        } else {
+            res.status(404).json({message: 'Usuario no encontrado'});
+        }
+    } catch (error) {
+        res.status(500).json({error:error.message})
     }
 })
 
