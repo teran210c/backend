@@ -1,9 +1,16 @@
-const express = require('express')
-const app = express()
-const port = 3010
+const express = require('express');
+const app = express();
+const port = 3010;
+const {Server} = require("socket.io");
+const chatSocket = require("./sockets/chat");
 
-const {testConnection} = require('./config/db')
-const userRoutes = require('./routes/users')
+const userRoutes = require('./routes/users');
+const {testConnection} = require('./config/db');
+
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: { origin: "*" },
+});
 
 app.use(express.json())
 
