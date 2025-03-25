@@ -54,14 +54,19 @@ app.put('/users/:id', async (req,res)=>{
     }
 })
 
-app.delete('/users/:id', (req,res)=>{
+app.delete('/users/:id', async (req,res)=>{
     const id = parseInt(req.params.id);
-    const index = users.findIndex(u=>u.id===id);
-    if (index !== -1){
-        const deletedUsers = users.splice(index,1);
-        res.json(deletedUsers[0])
-    } else{
-        res.status(404).json({message:'El usuario no existe'})
+    try {
+        const [result] = await db.query('DELETE FROM users WHERE id = ?', [id]);
+        if (result.affectedRows > 0) {
+            res.json({message: 'Usuario eleiminado correctamente'});
+            
+        } else {
+            res.status(404).json({message: 'Usuario no encontrado'});
+            
+        }
+    } catch (error) {
+        res.status(500).json({error:error.message});
     }
 })
 
